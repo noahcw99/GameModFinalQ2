@@ -472,6 +472,9 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		save = damage;
 	}
 
+	/*if (attacker->client && targ->health > 0 &&) {
+		incrementBuyMoney();
+	}*/
 //ZOID
 //team armor protect
 	if (ctf->value && targ->client && attacker->client &&

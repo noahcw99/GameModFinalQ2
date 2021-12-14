@@ -775,6 +775,10 @@ void ClientEndServerFrame (edict_t *ent);
 //
 // p_hud.c
 //
+void spawnEntity();
+void getPoints();
+void incrementPoints();
+void decreasePoints();
 void MoveClientToIntermission (edict_t *client);
 void G_SetStats (edict_t *ent);
 void G_SetSpectatorStats (edict_t *ent);

@@ -1490,12 +1490,14 @@ This will be called once for each client frame, which will
 usually be a couple times for each server frame.
 ==============
 */
-void ClientThink (edict_t *ent, usercmd_t *ucmd)
+void ClientThink(edict_t* ent, usercmd_t* ucmd)
 {
-	gclient_t	*client;
-	edict_t	*other;
-	int		i, j;
-	pmove_t	pm;
+	gclient_t* client;
+	edict_t* other;
+	int        i, j;
+	pmove_t    pm;
+
+	if (true) gi.dprintf("Testing\n");
 
 	level.current_entity = ent;
 	client = ent->client;

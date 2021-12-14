@@ -1558,7 +1558,30 @@ void PrintPmove (pmove_t *pm)
 	c2 = CheckBlock (&pm->cmd, sizeof(pm->cmd));
 	Com_Printf ("sv %3i:%i %i\n", pm->cmd.impulse, c1, c2);
 }
-
+edict_t* smallHealthDrop1;
+edict_t* smallHealthDrop2;
+edict_t* bigHealthDrop1;
+edict_t* wave1Berserk1;
+edict_t* wave1Berserk2;
+edict_t* wave2Berserk1;
+edict_t* wave2Berserk2;
+edict_t* wave2Berserk3;
+edict_t* firstBossMob;
+extern int points;
+int wave1Mob1Points = 1;
+int wave1Mob2Points = 1;
+int wave2Mob1Points = 1;
+int wave2Mob2Points = 1;
+int wave2Mob3Points = 1;
+int wave3Mob1Points = 1;
+int wave1Drop = 1;
+int wave2Drop1 = 1;
+int wave2Drop2 = 1;
+int firstMessage = 1;
+int secondMessage = 1;
+int firstWave = 2;
+int secondWave = 3;
+int firstBoss = 1;
 /*
 ==============
 ClientThink
@@ -1573,6 +1596,175 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
+
+
+
+	if (firstMessage == 1) {
+		gi.centerprintf(ent, "WAVE 1 INCOMING\nCURRENT POINTS: %i", points);
+		firstMessage--;
+	}
+	if (firstWave == 2) {
+		wave1Berserk1 = G_Spawn();
+		wave1Berserk1->s.origin[0] = 1317;
+		wave1Berserk1->s.origin[1] = 978;
+		wave1Berserk1->s.origin[2] = 670;
+		SP_monster_berserk(wave1Berserk1);
+		firstWave--;
+	}
+	if (firstWave == 1) {
+		wave1Berserk2 = G_Spawn();
+		wave1Berserk2->s.origin[0] = 1399;
+		wave1Berserk2->s.origin[1] = 972;
+		wave1Berserk2->s.origin[2] = 670;
+		SP_monster_berserk(wave1Berserk2);
+		firstWave--;
+	}
+	if (wave1Mob1Points == 1) {
+		if (wave1Berserk1->health <= 0) {
+			points += 5;
+			gi.centerprintf(ent, "+%i POINTS", 5);
+			wave1Mob1Points--;
+		}
+	}
+	if (wave1Mob2Points == 1) {
+		if (wave1Berserk2->health <= 0) {
+			points += 5;
+			gi.centerprintf(ent, "+%i POINTS", 5);
+			wave1Mob2Points--;
+		}
+	}
+	if (wave1Berserk1->health <= 0 && wave1Drop != 0) {
+		float x = wave1Berserk1->s.origin[0];
+		float y = wave1Berserk1->s.origin[1];
+		float z = wave1Berserk1->s.origin[2];
+		smallHealthDrop1 = G_Spawn();
+		smallHealthDrop1->s.origin[0] = x;
+		smallHealthDrop1->s.origin[1] = y;
+		smallHealthDrop1->s.origin[2] = z + 5;
+		SP_item_health_small(smallHealthDrop1);
+		wave1Drop--;
+	}
+	if (wave1Berserk2->health <= 0 && wave1Drop != 0) {
+		float x = wave1Berserk2->s.origin[0];
+		float y = wave1Berserk2->s.origin[1];
+		float z = wave1Berserk2->s.origin[2];
+		smallHealthDrop1 = G_Spawn();
+		smallHealthDrop1->s.origin[0] = x;
+		smallHealthDrop1->s.origin[1] = y;
+		smallHealthDrop1->s.origin[2] = z + 5;
+		SP_item_health_small(smallHealthDrop1);
+		wave1Drop--;
+	}
+
+	
+	if (secondMessage == 1 && level.killed_monsters == 2) {
+		gi.centerprintf(ent, "WAVE 2 INCOMING\nCURRENT POINTS: %i", points);
+		secondMessage--;
+	}
+	if (secondWave == 3 && level.killed_monsters == 2) {
+		wave2Berserk1 = G_Spawn();
+		wave2Berserk1->s.origin[0] = 1422;
+		wave2Berserk1->s.origin[1] = 499;
+		wave2Berserk1->s.origin[2] = 478;
+		SP_monster_berserk(wave2Berserk1);
+		secondWave--;
+	}
+	if (secondWave == 2 && level.killed_monsters == 2) {
+		wave2Berserk2 = G_Spawn();
+		wave2Berserk2->s.origin[0] = 1610;
+		wave2Berserk2->s.origin[1] = 694;
+		wave2Berserk2->s.origin[2] = 540;
+		SP_monster_gladiator(wave2Berserk2);
+		secondWave--;
+	}
+	if (secondWave == 1 && level.killed_monsters == 2) {
+		wave2Berserk3 = G_Spawn();
+		wave2Berserk3->s.origin[0] = 1480;
+		wave2Berserk3->s.origin[1] = 868;
+		wave2Berserk3->s.origin[2] = 478;
+		SP_monster_berserk(wave2Berserk3);
+		secondWave--;
+	}
+	if (level.killed_monsters >= 2) {
+		if (wave2Mob1Points == 1) {
+			if (wave2Berserk1->health <= 0) {
+				points += 5;
+				gi.centerprintf(ent, "+%i POINTS", 5);
+				wave2Mob1Points--;
+			}
+		}
+		if (wave2Mob2Points == 1) {
+			if (wave2Berserk2->health <= 0) {
+				points += 15;
+				gi.centerprintf(ent, "+%i POINTS", 15);
+				wave2Mob2Points--;
+			}
+		}
+		if (wave2Mob3Points == 1) {
+			if (wave2Berserk3->health <= 0) {
+				points += 5;
+				gi.centerprintf(ent, "+%i POINTS", 5);
+				wave2Mob3Points--;
+			}
+		}
+	}
+	if (level.killed_monsters >= 2) {
+		if (wave2Berserk1->health <= 0 && wave2Drop1 != 0) {
+			float x = wave2Berserk1->s.origin[0];
+			float y = wave2Berserk1->s.origin[1];
+			float z = wave2Berserk1->s.origin[2];
+			smallHealthDrop2 = G_Spawn();
+			smallHealthDrop2->s.origin[0] = x;
+			smallHealthDrop2->s.origin[1] = y;
+			smallHealthDrop2->s.origin[2] = z + 5;
+			SP_item_health_small(smallHealthDrop2);
+			wave2Drop1--;
+		}
+		if (wave2Berserk2->health <= 0 && wave2Drop2 != 0) {
+			float x = wave2Berserk2->s.origin[0];
+			float y = wave2Berserk2->s.origin[1];
+			float z = wave2Berserk2->s.origin[2];
+			bigHealthDrop1 = G_Spawn();
+			bigHealthDrop1->s.origin[0] = x;
+			bigHealthDrop1->s.origin[1] = y;
+			bigHealthDrop1->s.origin[2] = z + 5;
+			SP_item_health_large(bigHealthDrop1);
+			wave2Drop2--;
+		}
+		if (wave2Berserk3->health <= 0 && wave2Drop2 != 0) {
+			float x = wave2Berserk3->s.origin[0];
+			float y = wave2Berserk3->s.origin[1];
+			float z = wave2Berserk3->s.origin[2];
+			bigHealthDrop1 = G_Spawn();
+			bigHealthDrop1->s.origin[0] = x;
+			bigHealthDrop1->s.origin[1] = y;
+			bigHealthDrop1->s.origin[2] = z + 5;
+			SP_item_health_large(bigHealthDrop1);
+			wave2Drop2--;
+		}
+	}
+
+	if (firstBoss == 1 && level.killed_monsters == 5) {
+		gi.centerprintf(ent, "BOSS INCOMING\nCURRENT POINTS: %i", points);
+		firstBossMob = G_Spawn();
+		firstBossMob->s.origin[0] = 1548;
+		firstBossMob->s.origin[1] = 688;
+		firstBossMob->s.origin[2] = 540;
+		SP_monster_boss2(firstBossMob);
+		firstBoss--;
+	}
+	if (level.killed_monsters >= 5) {
+		if (wave3Mob1Points == 1) {
+			if (firstBossMob->health <= 0) {
+				points += 25;
+				gi.centerprintf(ent, "+%i POINTS", 25);
+				wave3Mob1Points--;
+			}
+		}
+	}
+	if (level.killed_monsters == 6) {
+		gi.centerprintf(ent, "ALL WAVES CLEARED!\nCURRENT POINTS: %i", points);
+	}
 
 	level.current_entity = ent;
 	client = ent->client;
